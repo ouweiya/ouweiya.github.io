@@ -1,26 +1,23 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Fragment as f, createElement as e, useState, useEffect } from 'react';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+const List = () => {
+  const [list, setList] = useState([]);
+  useEffect(() => {
+    (async callback => {
+      try {
+        const url = `https://api.github.com/users/ouweiya/repos?sort=updated`;
+        const response = await fetch(url);
+        const responseBody = await response.json();
+        const names = await responseBody.map(git => git.name);
+        const lis = names.map((name, i) => e('li', { key: i }, name));
+        setList(lis);
+      } catch (error) {
+        console.error(error);
+      }
+    })();
+  }, []);
 
-export default App;
+  return list;
+};
+
+export default e(f, null, e(List));
